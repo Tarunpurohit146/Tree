@@ -5,7 +5,6 @@ import argparse
 import shutil
 import time
 import sys
-from colorama import Fore
 class tree:
     def __init__(self):
         self.ssize=int(shutil.get_terminal_size().columns)
@@ -26,18 +25,18 @@ class tree:
                     self.dir+=1
                     print(f"\033[0;36m{os.path.getsize(os.path.join(dirt,i))}bytes \033[0;37m📂{i}__|".rjust(int(self.ssize/2)+11))
                     if directory==i:
-                        print(Fore.YELLOW+'\nDirectory Found')
+                        print('\033[0;33m\nDirectory Found')
                         self.flag=0
                         break
                 else:
                     self.file+=1
                     print("|__".rjust(int(self.ssize/2))+f"\033[0;37m{i} \033[0;36m{os.path.getsize(os.path.join(dirt,i))}bytes\033[0;37m")
                     if file == i:
-                        print(Fore.YELLOW+'\nFile Found')
+                        print('\033[0;33m\nFile Found')
                         self.flag=0
                         break          
         except FileNotFoundError:
-            print(Fore.RED+"File not found!")
+            print("\033[0;31mFile not found!")
     def adance_structure(self,dirt,prf=""):
         try:
             dir_list1=sorted([i for i in os.listdir(dirt)])
@@ -46,39 +45,38 @@ class tree:
                 self.content(abst)
                 if i == len(dir_list1)-1:
                     if os.path.isdir(abst):
-                        print(f"{prf}└──{dir_list1[i]} 📂\033[0;33m{os.path.getsize(abst)}bytes\033[0;37m")
+                        print(f"{prf}└──{dir_list1[i]}📂 \033[0;33m{os.path.getsize(abst)}bytes\033[0;37m")
                         if self.find_dirt == dir_list1[i]:
-                            print(Fore.YELLOW+'\ndirctory found')
+                            print('\033[0;33m\ndirctory found')
                             self.basic_structure(abst)
-                            print('asd')
                             self.find_file=self.find_dirt=0
                             break
                         self.adance_structure(abst,prf + "      ")
                     else:
-                        print(f'{prf}└──{dir_list1[i]}\033[0;36m{os.path.getsize(abst)}bytes\033[0;37m')
+                        print(f'{prf}└──{dir_list1[i]} \033[0;36m{os.path.getsize(abst)}bytes\033[0;37m')
                         if self.find_file == dir_list1[i]:
-                            print(Fore.YELLOW+'\nfile found')
+                            print('\033[0;33m\nfile found')
                             self.find_file=self.find_dirt=0
                             exit()
                         continue
                 else:    
                     if os.path.isdir(abst):
-                        print(f"{prf}└──{dir_list1[i]} 📂\033[0;33m{os.path.getsize(abst)}bytes\033[0;37m")
+                        print(f"{prf}└──{dir_list1[i]}📂 \033[0;33m{os.path.getsize(abst)}bytes\033[0;37m")
                         if self.find_dirt == dir_list1[i]:
-                            print(Fore.YELLOW+'\ndirctory found')
+                            print('\033[0;33m\ndirctory found')
                             self.basic_structure(abst)
                             self.find_file=self.find_dirt=0
                             break
                         self.adance_structure(abst,prf+"|    ")
                     else:
-                        print(f'{prf}├──{dir_list1[i]}\033[0;36m{os.path.getsize(abst)}bytes\033[0;37m')
+                        print(f'{prf}├──{dir_list1[i]} \033[0;36m{os.path.getsize(abst)}bytes\033[0;37m')
                         if self.find_file == dir_list1[i]:
-                            print(Fore.YELLOW+'\nfile found')
+                            print('\033[0;33m\nfile found')
                             self.find_file=self.find_dirt=0
                             exit()
                         continue
         except FileNotFoundError:
-            print(Fore.RED+"File not found!")
+            print("\033[0;33mFile not found!")
     def extention(self,dirt_name):
         try:
             ext=[]
@@ -88,12 +86,12 @@ class tree:
                     ext.append(val[-1])
             e=sorted(set(ext))
             for i in e:
-                print(Fore.CYAN+"\033[4m"+i+"\033[0m")
+                print("\033[4;36m"+i+"\033[0m")
                 for j in os.listdir(dirt_name):
                     if j.split('.')[-1] == i and len(j.split('.'))>1:
                         print(f"\033[0;32m  ─── {j} \033[0;36m{os.path.getsize(os.path.join(dirt_name,j))}bytes\033[0;37m")
         except FileNotFoundError:
-            print(Fore.RED+"File not found!")
+            print("\033[0;31mFile not found!")
     def meta(self,file_name,out_file=None):
         try:
             fname=f"File Name : {file_name}"
@@ -111,10 +109,10 @@ class tree:
             else:
                 print(f"\n{fname}\n{fsize}\n{gid}\n{uid}\n{fpermission}\n{laccessfile}\n{lmodifyfile}\n\n")
         except FileNotFoundError:
-            print(Fore.RED+"File not found!")
+            print("\033[0;32m File not found!")
     def __del__(self):
         if self.dir:
-            print(f"{Fore.GREEN}\nTotal directrys:{self.dir}\nTotal files:{self.file}\nTime taken:{self.time_end-self.time_start}ns\n")
+            print(f"\033[0;32m\nTotal directrys:{self.dir}\nTotal files:{self.file}\nTime taken:{self.time_end-self.time_start}ns\n")
 if __name__=="__main__":
     parse=argparse.ArgumentParser() 
     parse.add_argument("-b","--basic",metavar="directry_name",help="show's basic structure of the directory")
@@ -126,7 +124,6 @@ if __name__=="__main__":
     parse.add_argument("-o",metavar="file_name",help="Use the option with -e to save the meta information in a file")  
     arg=parse.parse_args()  
     tr=tree()
-    
     if arg.o and (arg.basic or arg.advance or arg.file or arg.e or arg.directory):
         print('should use -o option with -m')
         exit()
@@ -137,7 +134,7 @@ if __name__=="__main__":
         tr.basic_structure(arg.basic,arg.file,arg.directory)
         tr.time_end=time.time_ns()
         if tr.flag == 1 and (arg.file or arg.directory):
-            print(Fore.YELLOW+'\nnot found!')
+            print('\033[0;33m\nnot found!')
     elif arg.m and (arg.basic or arg.advance or arg.file or arg.directory or arg.e):
         print("option -m can be used alone or can be used with option -o")
     elif arg.file and len(sys.argv) <= 3:
@@ -152,7 +149,7 @@ if __name__=="__main__":
         tr.adance_structure(arg.advance)
         tr.time_end=time.time_ns()
         if tr.find_dirt != 0 and arg.directory or tr.find_file !=0 and arg.file:
-            print(Fore.YELLOW+'\nnot found!')
+            print('\033[0;33m\nnot found!')
     elif arg.e:
         tr.extention(arg.e)
     elif arg.m and arg.o:
